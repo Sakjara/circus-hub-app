@@ -1,3 +1,154 @@
+import Image from 'next/image';
+import Link from 'next/link';
+import { ArrowRight, Star, Tent, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import ShowCard from '@/components/show-card';
+import { shows, vendors } from '@/lib/data';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+
 export default function Home() {
-  return <></>;
+  const heroImage = PlaceHolderImages.find((img) => img.id === 'hero');
+  const aboutImage = PlaceHolderImages.find((img) => img.id === 'about');
+
+  return (
+    <div className="flex flex-col">
+      {/* Hero Section */}
+      <section className="relative h-[60vh] md:h-[80vh] w-full">
+        {heroImage && (
+          <Image
+            src={heroImage.imageUrl}
+            alt={heroImage.description}
+            fill
+            className="object-cover"
+            priority
+            data-ai-hint={heroImage.imageHint}
+          />
+        )}
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4">
+          <h1 className="font-headline text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
+            Welcome to the Garden Bros Circus
+          </h1>
+          <p className="mt-4 max-w-2xl text-lg md:text-xl text-primary-foreground/80">
+            Experience the magic, thrills, and unforgettable moments under the big top. A world of wonder awaits!
+          </p>
+          <Button asChild size="lg" className="mt-8 bg-accent text-accent-foreground hover:bg-accent/90">
+            <Link href="/shows">
+              Explore Shows <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+        </div>
+      </section>
+
+      {/* Upcoming Shows Section */}
+      <section className="py-12 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+          <h2 className="font-headline text-3xl md:text-4xl font-bold text-center">
+            Upcoming Shows
+          </h2>
+          <p className="mt-2 text-center text-muted-foreground max-w-xl mx-auto">
+            Don't miss out on our spectacular lineup of events. Book your tickets now for an adventure of a lifetime.
+          </p>
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {shows.slice(0, 3).map((show) => (
+              <ShowCard key={show.id} show={show} />
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <Button asChild variant="outline">
+              <Link href="/shows">View All Shows</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* About Us Section */}
+      <section className="py-12 md:py-24 bg-secondary/50">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="rounded-lg overflow-hidden shadow-xl">
+              {aboutImage && (
+                <Image
+                  src={aboutImage.imageUrl}
+                  alt={aboutImage.description}
+                  width={600}
+                  height={400}
+                  className="w-full h-auto object-cover"
+                  data-ai-hint={aboutImage.imageHint}
+                />
+              )}
+            </div>
+            <div>
+              <h2 className="font-headline text-3xl md:text-4xl font-bold">
+                A Legacy of Entertainment
+              </h2>
+              <p className="mt-4 text-muted-foreground">
+                For generations, Garden Bros Circus has been synonymous with family fun and world-class entertainment. Our commitment is to bring joy and wonder to audiences of all ages, creating memories that last a lifetime.
+              </p>
+              <div className="mt-6 space-y-4">
+                <div className="flex items-start">
+                  <div className="bg-primary text-primary-foreground p-2 rounded-full">
+                    <Star className="h-5 w-5" />
+                  </div>
+                  <p className="ml-4"><strong>World-Class Performers:</strong> Featuring award-winning acrobats, clowns, and artists from around the globe.</p>
+                </div>
+                <div className="flex items-start">
+                  <div className="bg-primary text-primary-foreground p-2 rounded-full">
+                    <Tent className="h-5 w-5" />
+                  </div>
+                  <p className="ml-4"><strong>Unforgettable Atmosphere:</strong> The magic of the traditional big top combined with modern production.</p>
+                </div>
+                <div className="flex items-start">
+                  <div className="bg-primary text-primary-foreground p-2 rounded-full">
+                    <Users className="h-5 w-5" />
+                  </div>
+                  <p className="ml-4"><strong>Fun for All Ages:</strong> A perfect outing for the whole family, with something to delight everyone.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Vendors Section */}
+      <section className="py-12 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+          <h2 className="font-headline text-3xl md:text-4xl font-bold text-center">
+            Our Featured Vendors
+          </h2>
+          <p className="mt-2 text-center text-muted-foreground max-w-xl mx-auto">
+            Enjoy delicious food, drinks, and memorable souvenirs from our trusted partners.
+          </p>
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {vendors.map((vendor) => {
+              const vendorImage = PlaceHolderImages.find(img => img.id === vendor.imageId);
+              return (
+                <Card key={vendor.id} className="text-center border-2 border-transparent hover:border-accent transition-colors duration-300 shadow-lg hover:shadow-2xl">
+                  <CardHeader>
+                    {vendorImage && (
+                      <div className="w-24 h-24 mx-auto rounded-full overflow-hidden bg-secondary flex items-center justify-center">
+                        <Image
+                          src={vendorImage.imageUrl}
+                          alt={vendor.name}
+                          width={96}
+                          height={96}
+                          className="object-cover"
+                          data-ai-hint={vendorImage.imageHint}
+                        />
+                      </div>
+                    )}
+                    <CardTitle className="mt-4">{vendor.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground text-sm">{vendor.description}</p>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }
