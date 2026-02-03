@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
-import { Calendar, MapPin, Ticket, Clock, Star } from 'lucide-react';
+import { Calendar, MapPin, Ticket, Clock } from 'lucide-react';
 
 import { shows } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -9,11 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-
-const seats = Array.from({ length: 8 * 12 }, (_, i) => {
-  const status = Math.random() > 0.6 ? 'sold' : 'available';
-  return { id: i, status };
-});
+import { SeatingChart } from '@/components/seating-chart';
 
 export default function ShowDetailPage({ params }: { params: { id: string } }) {
   const show = shows.find((s) => s.id === params.id);
@@ -67,30 +63,8 @@ export default function ShowDetailPage({ params }: { params: { id: string } }) {
                 </div>
               </div>
               <Separator className="my-6" />
-              <h3 className="font-headline text-xl mb-4">Select Your Seats</h3>
-              <div className="p-4 bg-secondary/30 rounded-lg">
-                <div className="w-full h-2 bg-muted rounded-full mb-4" />
-                <p className="text-center text-sm text-muted-foreground mb-4">STAGE</p>
-                <div className="grid grid-cols-12 gap-1.5">
-                  {seats.map(seat => (
-                    <Button
-                      key={seat.id}
-                      variant={seat.status === 'sold' ? 'secondary' : 'outline'}
-                      size="icon"
-                      className="h-6 w-6 text-xs"
-                      disabled={seat.status === 'sold'}
-                      aria-label={`Seat ${seat.id}`}
-                    >
-                      {/* Seat number could go here */}
-                    </Button>
-                  ))}
-                </div>
-                <div className="flex justify-center space-x-4 mt-4 text-xs text-muted-foreground">
-                    <div className="flex items-center"><div className="w-3 h-3 rounded-full border mr-1.5"></div>Available</div>
-                    <div className="flex items-center"><div className="w-3 h-3 rounded-full bg-primary mr-1.5"></div>Selected</div>
-                    <div className="flex items-center"><div className="w-3 h-3 rounded-full bg-secondary mr-1.5"></div>Sold</div>
-                </div>
-              </div>
+              <h3 className="font-headline text-xl mb-4">Select Your Section</h3>
+              <SeatingChart />
               <Button size="lg" className="w-full mt-6">
                 <Ticket className="mr-2 h-5 w-5" />
                 Buy Tickets
