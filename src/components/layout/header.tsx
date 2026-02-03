@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import { GardenBrosLogo } from '@/components/garden-bros-logo';
 
 const navLinks = [
   { href: '/shows', label: 'Shows', icon: Tent },
@@ -23,10 +24,7 @@ export default function Header() {
       <div className="container flex h-16 items-center">
         <div className="mr-4 flex">
           <Link href="/" className="flex items-center space-x-2">
-            <Tent className="h-6 w-6 text-primary" />
-            <span className="font-bold font-headline text-lg sm:inline-block">
-              Circus Hub
-            </span>
+            <GardenBrosLogo />
           </Link>
         </div>
         <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
@@ -55,8 +53,7 @@ export default function Header() {
               <SheetContent side="right">
                 <div className="flex flex-col space-y-4 pt-6">
                   <Link href="/" className="flex items-center space-x-2 mb-4">
-                     <Tent className="h-6 w-6 text-primary" />
-                    <span className="font-bold font-headline text-lg">Circus Hub</span>
+                     <GardenBrosLogo />
                   </Link>
                   {navLinks.map((link) => (
                     <Link

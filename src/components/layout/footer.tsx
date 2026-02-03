@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Tent } from 'lucide-react';
+import { GardenBrosLogo } from '@/components/garden-bros-logo';
 import { Button } from '@/components/ui/button';
 
 const socialLinks = [
@@ -14,8 +14,7 @@ export default function Footer() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row items-center justify-between">
           <div className="flex items-center space-x-2 mb-4 md:mb-0">
-            <Tent className="h-6 w-6 text-primary" />
-            <span className="font-bold font-headline text-lg">Circus Hub</span>
+            <GardenBrosLogo />
           </div>
           <div className="text-sm text-muted-foreground mb-4 md:mb-0">
             &copy; {new Date().getFullYear()} Garden Bros Circus. All Rights Reserved.

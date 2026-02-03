@@ -77,7 +77,7 @@ export const userTickets: Ticket[] = [
     showTitle: 'Cirque du Mystique',
     date: '2024-10-26T20:00:00Z',
     seat: 'Section A, Row 5, Seat 12',
-    qrCodeValue: 'CIRCUS-HUB-TICKET-tkt123-SHOW1',
+    qrCodeValue: 'GARDEN-BROS-TICKET-tkt123-SHOW1',
   },
   {
     id: 'tkt456',
@@ -85,6 +85,6 @@ export const userTickets: Ticket[] = [
     showTitle: 'Acrobatic Marvels',
     date: '2024-11-15T19:30:00Z',
     seat: 'Section C, Row 2, Seat 4',
-    qrCodeValue: 'CIRCUS-HUB-TICKET-tkt456-SHOW2',
+    qrCodeValue: 'GARDEN-BROS-TICKET-tkt456-SHOW2',
   },
 ];

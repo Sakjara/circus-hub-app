@@ -74,7 +74,7 @@ export default function ValidatePage() {
               <QrCode className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="e.g., CIRCUS-HUB-TICKET-tkt123-SHOW1"
+                placeholder="e.g., GARDEN-BROS-TICKET-tkt123-SHOW1"
                 className="pl-10"
                 value={ticketId}
                 onChange={(e) => setTicketId(e.target.value)}
