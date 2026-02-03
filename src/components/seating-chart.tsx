@@ -69,26 +69,26 @@ export function SeatingChart() {
       <div className="grid grid-cols-12 grid-rows-12 gap-1.5 w-full max-w-[700px] aspect-square mx-auto">
         
         {/* Stage */}
-        <div className="col-start-5 col-span-3 row-start-6 row-span-2 bg-muted rounded-lg flex items-center justify-center shadow-inner">
+        <div className="col-start-4 col-span-3 row-start-6 row-span-2 bg-muted rounded-lg flex items-center justify-center shadow-inner">
           <p className="font-headline text-lg text-muted-foreground tracking-widest">
             STAGE
           </p>
         </div>
 
         {/* VIP Seats */}
-        <div className="col-start-4 col-span-6 row-start-5 row-span-1"><Section name="VIP Top" isSelected={selectedSection === 'VIP Top'} onClick={() => handleSectionClick('VIP Top')} /></div>
-        <div className="col-start-10 col-span-1 row-start-6 row-span-2"><Section name="VIP Right" isSelected={selectedSection === 'VIP Right'} onClick={() => handleSectionClick('VIP Right')} /></div>
-        <div className="col-start-4 col-span-6 row-start-8 row-span-1"><Section name="VIP Bottom" isSelected={selectedSection === 'VIP Bottom'} onClick={() => handleSectionClick('VIP Bottom')} /></div>
+        <div className="col-start-4 col-span-4 row-start-5 row-span-1"><Section name="VIP Top" isSelected={selectedSection === 'VIP Top'} onClick={() => handleSectionClick('VIP Top')} /></div>
+        <div className="col-start-4 col-span-4 row-start-8 row-span-1"><Section name="VIP Bottom" isSelected={selectedSection === 'VIP Bottom'} onClick={() => handleSectionClick('VIP Bottom')} /></div>
+        <div className="col-start-8 col-span-1 row-start-6 row-span-2"><Section name="VIP Right" isSelected={selectedSection === 'VIP Right'} onClick={() => handleSectionClick('VIP Right')} /></div>
 
         {/* Premium Seats */}
-        <div className="col-start-3 col-span-8 row-start-3 row-span-2"><Section name="Premium Top" isSelected={selectedSection === 'Premium Top'} onClick={() => handleSectionClick('Premium Top')} /></div>
-        <div className="col-start-11 col-span-1 row-start-5 row-span-4"><Section name="Premium Right" isSelected={selectedSection === 'Premium Right'} onClick={() => handleSectionClick('Premium Right')} /></div>
-        <div className="col-start-3 col-span-8 row-start-9 row-span-2"><Section name="Premium Bottom" isSelected={selectedSection === 'Premium Bottom'} onClick={() => handleSectionClick('Premium Bottom')} /></div>
+        <div className="col-start-3 col-span-7 row-start-3 row-span-2"><Section name="Premium Top" isSelected={selectedSection === 'Premium Top'} onClick={() => handleSectionClick('Premium Top')} /></div>
+        <div className="col-start-3 col-span-7 row-start-9 row-span-2"><Section name="Premium Bottom" isSelected={selectedSection === 'Premium Bottom'} onClick={() => handleSectionClick('Premium Bottom')} /></div>
+        <div className="col-start-9 col-span-2 row-start-5 row-span-4"><Section name="Premium Right" isSelected={selectedSection === 'Premium Right'} onClick={() => handleSectionClick('Premium Right')} /></div>
 
         {/* General Seats */}
         <div className="col-start-2 col-span-10 row-start-1 row-span-2"><Section name="General Top" isSelected={selectedSection === 'General Top'} onClick={() => handleSectionClick('General Top')} /></div>
-        <div className="col-start-12 col-span-1 row-start-3 row-span-8"><Section name="General Right" isSelected={selectedSection === 'General Right'} onClick={() => handleSectionClick('General Right')} /></div>
         <div className="col-start-2 col-span-10 row-start-11 row-span-2"><Section name="General Bottom" isSelected={selectedSection === 'General Bottom'} onClick={() => handleSectionClick('General Bottom')} /></div>
+        <div className="col-start-11 col-span-2 row-start-3 row-span-8"><Section name="General Right" isSelected={selectedSection === 'General Right'} onClick={() => handleSectionClick('General Right')} /></div>
         
       </div>
 
