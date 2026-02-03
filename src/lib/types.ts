@@ -14,6 +14,8 @@ export interface Vendor {
   name: string;
   description: string;
   imageId: string;
+  type: 'food' | 'souvenir';
+  price: number;
 }
 
 export interface Ticket {

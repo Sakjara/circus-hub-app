@@ -1,7 +1,11 @@
+'use client';
+
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
 import { Calendar, MapPin, Ticket, Clock } from 'lucide-react';
+import { useState } from 'react';
 
 import { shows } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -9,9 +13,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { SeatingChart } from '@/components/seating-chart';
+import { SeatingChart, type SectionName } from '@/components/seating-chart';
 
 export default function ShowDetailPage({ params }: { params: { id: string } }) {
+  const [selectedSection, setSelectedSection] = useState<SectionName | null>(null);
+  
   const show = shows.find((s) => s.id === params.id);
 
   if (!show) {
@@ -64,10 +70,12 @@ export default function ShowDetailPage({ params }: { params: { id: string } }) {
               </div>
               <Separator className="my-6" />
               <h3 className="font-headline text-xl mb-4">Select Your Section</h3>
-              <SeatingChart />
-              <Button size="lg" className="w-full mt-6">
-                <Ticket className="mr-2 h-5 w-5" />
-                Buy Tickets
+              <SeatingChart onSectionSelect={setSelectedSection} selectedSection={selectedSection} />
+              <Button asChild size="lg" className="w-full mt-6" disabled={!selectedSection}>
+                <Link href={selectedSection ? `/checkout/${show.id}/products?section=${encodeURIComponent(selectedSection)}` : '#'}>
+                  <Ticket className="mr-2 h-5 w-5" />
+                  Buy Tickets
+                </Link>
               </Button>
             </CardContent>
           </Card>

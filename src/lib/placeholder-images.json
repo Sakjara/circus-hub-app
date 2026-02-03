@@ -61,6 +61,12 @@
       "imageHint": "hot dog"
     },
     {
+      "id": "souvenir-cap",
+      "description": "A baseball cap with an embroidered logo.",
+      "imageUrl": "https://images.unsplash.com/photo-1592367630397-65872fe016e9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxiYXNlYmFsbCUyMGNhcHxlbnwwfHx8fDE3NzAxMTQ4MzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "baseball cap"
+    },
+    {
       "id": "qr-code",
       "description": "A generic QR code.",
       "imageUrl": "https://images.unsplash.com/photo-1600147131759-880e94a6185f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxxciUyMGNvZGV8ZW58MHx8fHwxNzcwMDg5NjUwfDA&ixlib=rb-4.1.0&q=80&w=1080",
