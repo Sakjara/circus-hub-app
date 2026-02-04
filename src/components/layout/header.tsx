@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, Tent, Ticket, User, Shield } from 'lucide-react';
+import { Home, Menu, Tent, Ticket, User, Shield } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { GardenBrosLogo } from '@/components/garden-bros-logo';
 
 const navLinks = [
+  { href: '/', label: 'Home', icon: Home },
   { href: '/shows', label: 'Shows', icon: Tent },
   { href: '/tickets', label: 'My Tickets', icon: Ticket },
   { href: '/profile', label: 'Profile', icon: User },
@@ -21,33 +22,35 @@ export default function Header() {
 
   return (
     <header className="dark sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-20 md:h-24 items-center justify-between">
+      <div className="container flex h-20 md:h-24 items-center">
         
         {/* Left side */}
-        <div className="md:flex-1">
+        <div className="flex-1 flex justify-start">
           <Link href="/" className="flex items-center space-x-2">
             <GardenBrosLogo />
           </Link>
         </div>
 
         {/* Center Nav */}
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                'transition-colors hover:text-white',
-                pathname === link.href ? 'text-white' : 'text-white/60'
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
+        <nav className="hidden md:flex items-center justify-center">
+          <div className="flex space-x-6 text-sm font-medium">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  'transition-colors hover:text-white',
+                  pathname === link.href ? 'text-white' : 'text-white/90'
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </nav>
 
         {/* Right side */}
-        <div className="flex justify-end md:flex-1">
+        <div className="flex-1 flex justify-end">
           <div className="md:hidden">
             <Sheet>
               <SheetTrigger asChild>
