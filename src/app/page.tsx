@@ -50,9 +50,11 @@ export default function Home() {
           <p className="mt-2 text-center text-muted-foreground max-w-xl mx-auto">
             Don't miss out on our spectacular lineup of events. Book your tickets now for an adventure of a lifetime.
           </p>
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="mt-10 flex flex-wrap items-stretch justify-center gap-8">
             {shows.slice(0, 3).map((show) => (
-              <ShowCard key={show.id} show={show} />
+              <div key={show.id} className="w-full max-w-sm flex">
+                <ShowCard show={show} />
+              </div>
             ))}
           </div>
           <div className="text-center mt-12">

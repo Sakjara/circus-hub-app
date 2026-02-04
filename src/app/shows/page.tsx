@@ -12,9 +12,11 @@ export default function ShowsPage() {
           Browse our full lineup of spectacular performances. The greatest show on Earth is waiting for you!
         </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="flex flex-wrap items-stretch justify-center gap-8">
         {shows.map((show) => (
-          <ShowCard key={show.id} show={show} />
+          <div key={show.id} className="w-full max-w-sm flex">
+            <ShowCard show={show} />
+          </div>
         ))}
       </div>
     </div>
