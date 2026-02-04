@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 export const GardenBrosLogo = ({ className }: { className?: string }) => {
   return (
     <Image
-      src="https://www.gardenbrosnuclearcircus.com/wp-content/uploads/2023/10/logo.png"
+      src="https://www.gardenbrosnuclearcircus.com/wp-content/uploads/2023/11/GBNC-Logo-WHT-1-751x358.png"
       alt="Garden Bros Circus Logo"
       width={751}
       height={358}
