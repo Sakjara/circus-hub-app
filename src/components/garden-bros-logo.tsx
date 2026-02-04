@@ -1,13 +1,12 @@
 import Image from 'next/image';
 import { cn } from "@/lib/utils";
+import logo from '@/components/images/LOGO.png';
 
 export const GardenBrosLogo = ({ className }: { className?: string }) => {
   return (
     <Image
-      src="https://www.gardenbrosnuclearcircus.com/wp-content/uploads/2023/11/GBNC-Logo-WHT-1.png"
+      src={logo}
       alt="Garden Bros Circus Logo"
-      width={751}
-      height={358}
       className={cn("h-12 w-auto", className)}
       priority
     />

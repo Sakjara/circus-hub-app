@@ -34,12 +34,6 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'www.gardenbrosnuclearcircus.com',
-        port: '',
-        pathname: '/**',
-      },
     ],
   },
 };
