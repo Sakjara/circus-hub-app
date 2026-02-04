@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative h-[40vh] md:h-[50vh] w-full">
+      <section className="relative h-[50vh] md:h-[60vh] w-full">
         <Image
           src={bannerImage}
           alt="Garden Bros Circus Fun Factory"
