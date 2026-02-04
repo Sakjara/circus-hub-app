@@ -6,39 +6,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ShowCard from '@/components/show-card';
 import { shows, vendors } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import bannerImage from '@/components/images/banner.jpg';
 
 export default function Home() {
-  const heroImage = PlaceHolderImages.find((img) => img.id === 'hero');
   const aboutImage = PlaceHolderImages.find((img) => img.id === 'about');
 
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative h-[60vh] md:h-[80vh] w-full">
-        {heroImage && (
-          <Image
-            src={heroImage.imageUrl}
-            alt={heroImage.description}
-            fill
-            className="object-cover"
-            priority
-            data-ai-hint={heroImage.imageHint}
-          />
-        )}
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4">
-          <h1 className="font-headline text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
-            Welcome to the Garden Bros Circus
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg md:text-xl text-primary-foreground/80">
-            Experience the magic, thrills, and unforgettable moments under the big top. A world of wonder awaits!
-          </p>
-          <Button asChild size="lg" className="mt-8 bg-accent text-accent-foreground hover:bg-accent/90">
-            <Link href="/shows">
-              Explore Shows <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
-        </div>
+      <section className="relative h-[40vh] md:h-[50vh] w-full">
+        <Image
+          src={bannerImage}
+          alt="Garden Bros Circus Fun Factory"
+          fill
+          className="object-cover"
+          priority
+        />
       </section>
 
       {/* Upcoming Shows Section */}
