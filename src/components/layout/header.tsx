@@ -34,8 +34,8 @@ export default function Header() {
               key={link.href}
               href={link.href}
               className={cn(
-                'transition-colors hover:text-foreground/80',
-                pathname === link.href ? 'text-foreground' : 'text-foreground/60'
+                'transition-colors hover:text-white',
+                pathname === link.href ? 'text-white' : 'text-white/60'
               )}
             >
               {link.label}
@@ -52,7 +52,7 @@ export default function Header() {
                   <span className="sr-only">Toggle Menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="dark">
+              <SheetContent side="right" className="dark bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <div className="flex flex-col space-y-4 pt-6">
                   <Link href="/" className="flex items-center space-x-2 mb-4">
                      <GardenBrosLogo />
@@ -61,7 +61,7 @@ export default function Header() {
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="flex items-center space-x-2 rounded-md p-2 hover:bg-accent"
+                      className="flex items-center space-x-2 rounded-md p-2 text-white hover:bg-accent"
                     >
                       <link.icon className="h-5 w-5" />
                       <span>{link.label}</span>
