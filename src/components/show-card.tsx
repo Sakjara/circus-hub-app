@@ -26,7 +26,7 @@ export default function ShowCard({ show }: ShowCardProps) {
             alt={show.title}
             width={600}
             height={400}
-            className="w-full h-48 object-cover"
+            className="w-full h-64 object-cover"
             data-ai-hint={showImage.imageHint}
           />
         )}

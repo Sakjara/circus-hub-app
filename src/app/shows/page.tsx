@@ -14,7 +14,7 @@ export default function ShowsPage() {
       </div>
       <div className="flex flex-wrap items-stretch justify-center gap-8">
         {shows.map((show) => (
-          <div key={show.id} className="w-full max-w-sm flex">
+          <div key={show.id} className="w-full max-w-md flex">
             <ShowCard show={show} />
           </div>
         ))}
