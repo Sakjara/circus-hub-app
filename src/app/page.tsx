@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative h-[50vh] md:h-[60vh] w-full">
+      <section className="relative h-[60vh] md:h-[75vh] w-full">
         <Image
           src={bannerImage}
           alt="Garden Bros Circus Fun Factory"
@@ -34,7 +34,7 @@ export default function Home() {
             Don't miss out on our spectacular lineup of events. Book your tickets now for an adventure of a lifetime.
           </p>
           <div className="mt-10 flex flex-wrap items-stretch justify-center gap-8">
-            {shows.slice(0, 3).map((show) => (
+            {shows.map((show) => (
               <div key={show.id} className="w-full max-w-sm flex">
                 <ShowCard show={show} />
               </div>
