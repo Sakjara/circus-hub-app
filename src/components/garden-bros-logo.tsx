@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { cn } from "@/lib/utils";
-import logo from '@/components/images/LOGO.png';
+import logo from './images/LOGO.png';
 
 export const GardenBrosLogo = ({ className }: { className?: string }) => {
   return (
