@@ -15,7 +15,7 @@
     {
       "id": "show1",
       "description": "An acrobat performing a magical aerial silk routine.",
-      "imageUrl": "https://images.unsplash.com/photo-1718863336574-7b703d873bc6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bWFnaWMlMjBzaG93fGVufDB8fHx8MTc3MDE1NzkwMXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/funFactory.jpg",
       "imageHint": "magic show"
     },
     {
@@ -23,18 +23,6 @@
       "description": "A group of acrobats performing a daring balancing act.",
       "imageUrl": "https://images.unsplash.com/photo-1505619730259-b1288d154955?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxhY3JvYmF0aWNzfGVufDB8fHx8MTc3MDE1NzkwMnww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "acrobatics"
-    },
-    {
-      "id": "show3",
-      "description": "A colorful clown juggling in front of a happy crowd.",
-      "imageUrl": "https://images.unsplash.com/photo-1676238908209-cf1aa507a570?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjbG93biUyMHBlcmZvcm1hbmNlfGVufDB8fHx8MTc3MDE1NzkwMnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "clown performance"
-    },
-    {
-      "id": "show4",
-      "description": "An artist on stage with smoke and mysterious lights.",
-      "imageUrl": "https://images.unsplash.com/photo-1767979212124-bf08504f5dae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c3RhZ2UlMjBwZXJmb3JtYW5jZXxlbnwwfHx8fDE3NzAxMTU4Njd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "stage performance"
     },
     {
       "id": "vendor1",

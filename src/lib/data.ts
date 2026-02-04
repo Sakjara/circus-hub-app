@@ -6,7 +6,7 @@ export const shows: Show[] = [
     title: 'Fun Factory',
     description: 'A whimsical world of fun, laughs, and pure entertainment.',
     longDescription: 'Step into the Fun Factory, where laughter is manufactured and joy is the main product! This show is a delightful explosion of colors, comedy, and crazy contraptions. Perfect for kids and kids at heart, it\'s an unforgettable experience that will have the whole family smiling.',
-    imageId: 'show3',
+    imageId: 'show1',
     date: '2024-11-10T18:00:00Z',
     venue: 'The Fun Dome, Miami',
     price: 55.0,
