@@ -21,12 +21,13 @@ export default function Header() {
 
   return (
     <header className="dark sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-24  items-center">
-        <div className="mr-4 flex">
+      <div className="container flex h-24 items-center">
+        <div className="flex flex-1 justify-start">
           <Link href="/" className="flex items-center space-x-2">
             <GardenBrosLogo />
           </Link>
         </div>
+
         <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
           {navLinks.map((link) => (
             <Link
@@ -41,6 +42,7 @@ export default function Header() {
             </Link>
           ))}
         </nav>
+
         <div className="flex flex-1 items-center justify-end">
           <div className="md:hidden">
             <Sheet>
@@ -69,7 +71,7 @@ export default function Header() {
               </SheetContent>
             </Sheet>
           </div>
-          <Button className="hidden md:inline-flex ml-4" asChild>
+          <Button className="hidden md:inline-flex" asChild>
             <Link href="/shows">Buy Tickets</Link>
           </Button>
         </div>
