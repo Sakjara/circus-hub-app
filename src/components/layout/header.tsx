@@ -21,14 +21,14 @@ export default function Header() {
 
   return (
     <header className="dark sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-24 items-center">
-        <div className="flex flex-1 justify-start">
+      <div className="container flex h-20 md:h-24 items-center">
+        <div className="flex-1 md:flex-none">
           <Link href="/" className="flex items-center space-x-2">
             <GardenBrosLogo />
           </Link>
         </div>
 
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+        <nav className="hidden md:flex flex-1 justify-center items-center space-x-6 text-sm font-medium">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -43,7 +43,7 @@ export default function Header() {
           ))}
         </nav>
 
-        <div className="flex flex-1 items-center justify-end">
+        <div className="flex flex-1 justify-end">
           <div className="md:hidden">
             <Sheet>
               <SheetTrigger asChild>
