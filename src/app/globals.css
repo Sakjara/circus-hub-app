@@ -57,3 +57,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  /* Mobile first styles */
+  .h-\[60vh\] {
+      height: 45vh;
+  }
+  section.relative.h-\[60vh\].md\:h-\[75vh\].w-full {
+      margin-top: -15%;
+  }
+
+  /* Desktop styles */
+  @media (min-width: 768px) { /* Corresponds to md: breakpoint */
+      section.relative.h-\[60vh\].md\:h-\[75vh\].w-full {
+          margin-top: -4%;
+      }
+  }
+}
