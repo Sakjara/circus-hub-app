@@ -7,7 +7,7 @@ export const GardenBrosLogo = ({ className }: { className?: string }) => {
     <Image
       src={logo}
       alt="Garden Bros Circus Logo"
-      className={cn("h-[58rem] w-auto", className)}
+      className={cn("h-[5rem] w-auto", className)}
       priority
     />
   );
