@@ -1,10 +1,73 @@
-import data from './placeholder-images.json';
+import { type StaticImageData } from 'next/image';
+import funFactoryImage from '@/components/images/funFactory.jpg';
+import nuclearImage from '@/components/images/nuclear.jpg';
 
 export type ImagePlaceholder = {
   id: string;
   description: string;
-  imageUrl: string;
+  imageUrl: string | StaticImageData;
   imageHint: string;
 };
 
-export const PlaceHolderImages: ImagePlaceholder[] = data.placeholderImages;
+export const PlaceHolderImages: ImagePlaceholder[] = [
+    {
+      "id": "hero",
+      "description": "A grand circus tent glowing at dusk.",
+      "imageUrl": "https://images.unsplash.com/photo-1624031498635-0c27d1f2227e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjaXJjdXMlMjB0ZW50fGVufDB8fHx8MTc3MDE1NzkwMnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "circus tent"
+    },
+    {
+      "id": "about",
+      "description": "A joyful circus performer interacting with the audience.",
+      "imageUrl": "https://images.unsplash.com/photo-1547423753-bff7561e2956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjaXJjdXMlMjBwZXJmb3JtZXJ8ZW58MHx8fHwxNzcwMTU3OTAyfDA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageHint": "circus performer"
+    },
+    {
+      "id": "show1",
+      "description": "An acrobat performing a magical aerial silk routine.",
+      "imageUrl": funFactoryImage,
+      "imageHint": "magic show"
+    },
+    {
+      "id": "show2",
+      "description": "A group of acrobats performing a daring balancing act.",
+      "imageUrl": nuclearImage,
+      "imageHint": "acrobatics"
+    },
+    {
+      "id": "vendor1",
+      "description": "A vintage-style popcorn cart.",
+      "imageUrl": "https://images.unsplash.com/photo-1680136806846-c512d4b7641b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxmb29kJTIwY2FydHxlbnwwfHx8fDE3NzAxNTc5MDJ8MA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageHint": "food cart"
+    },
+    {
+      "id": "vendor2",
+      "description": "Colorful cups of lemonade with straws.",
+      "imageUrl": "https://images.unsplash.com/photo-1633740549460-1464dcf878ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxsZW1vbmFkZSUyMHN0YW5kfGVufDB8fHx8MTc3MDE1NzkwMnww&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageHint": "lemonade stand"
+    },
+    {
+      "id": "vendor3",
+      "description": "A collection of glowing toys and wands.",
+      "imageUrl": "https://images.unsplash.com/photo-1707581785904-41ba9e986eb2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxnbG93aW5nJTIwdG95c3xlbnwwfHx8fDE3NzAxNTc5MDJ8MA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageHint": "glowing toys"
+    },
+    {
+      "id": "vendor4",
+      "description": "A perfectly grilled hot dog in a bun.",
+      "imageUrl": "https://images.unsplash.com/photo-1619538189873-3f511db5fec6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxob3QlMjBkb2d8ZW58MHx8fHwxNzcwMTU3OTAyfDA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageHint": "hot dog"
+    },
+    {
+      "id": "souvenir-cap",
+      "description": "A baseball cap with an embroidered logo.",
+      "imageUrl": "https://images.unsplash.com/photo-1592367630397-65872fe016e9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxiYXNlYmFsbCUyMGNhcHxlbnwwfHx8fDE3NzAxMTQ4MzN8MA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageHint": "baseball cap"
+    },
+    {
+      "id": "qr-code",
+      "description": "A generic QR code.",
+      "imageUrl": "https://images.unsplash.com/photo-1600147131759-880e94a6185f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxxciUyMGNvZGV8ZW58MHx8fHwxNzcwMDg5NjUwfDA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageHint": "qr code"
+    }
+  ];
