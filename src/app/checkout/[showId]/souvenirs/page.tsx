@@ -7,20 +7,24 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { vendors } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { ArrowRight, Star } from 'lucide-react';
+import { ArrowRight, Star, ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
-export default function SouvenirsPage({ params }: { params: { showId: string } }) {
+import { use } from 'react';
+// ...
+export default function SouvenirsPage({ params }: { params: Promise<{ showId: string }> }) {
+  const { showId } = use(params);
   const searchParams = useSearchParams();
   const section = searchParams.get('section');
   const productParams = searchParams.getAll('product');
+  const souvenirParams = searchParams.getAll('souvenir');
 
-  const [selectedSouvenirs, setSelectedSouvenirs] = useState<string[]>([]);
-  
+  const [selectedSouvenirs, setSelectedSouvenirs] = useState<string[]>(souvenirParams);
+
   const souvenirVendors = vendors.filter(v => v.type === 'souvenir');
-  
+
   const handleCheckboxChange = (vendorId: string, checked: boolean | string) => {
     if (checked) {
       setSelectedSouvenirs(prev => [...prev, vendorId]);
@@ -28,10 +32,11 @@ export default function SouvenirsPage({ params }: { params: { showId: string } }
       setSelectedSouvenirs(prev => prev.filter(id => id !== vendorId));
     }
   };
-  
+
   const productsQuery = productParams.map(p => `product=${p}`).join('&');
   const souvenirsQuery = selectedSouvenirs.map(s => `souvenir=${s}`).join('&');
-  const nextStepUrl = `/checkout/${params.showId}/summary?section=${encodeURIComponent(section || '')}${productsQuery ? `&${productsQuery}`: ''}${souvenirsQuery ? `&${souvenirsQuery}`: ''}`;
+  const nextStepUrl = `/checkout/${showId}/summary?section=${encodeURIComponent(section || '')}${productsQuery ? `&${productsQuery}` : ''}${souvenirsQuery ? `&${souvenirsQuery}` : ''}`;
+  const prevStepUrl = `/checkout/${showId}/products?section=${encodeURIComponent(section || '')}${productsQuery ? `&${productsQuery}` : ''}`;
 
   return (
     <Card>
@@ -64,6 +69,7 @@ export default function SouvenirsPage({ params }: { params: { showId: string } }
                   <p className="font-bold text-primary">${vendor.price.toFixed(2)}</p>
                 </div>
                 <Checkbox
+                  checked={selectedSouvenirs.includes(vendor.id)}
                   id={`vendor-${vendor.id}`}
                   onCheckedChange={(checked) => handleCheckboxChange(vendor.id, checked)}
                   className="h-6 w-6"
@@ -73,15 +79,23 @@ export default function SouvenirsPage({ params }: { params: { showId: string } }
           })}
         </div>
       </CardContent>
-      <CardFooter className="flex justify-end space-x-4">
-         <Button variant="outline" asChild>
-          <Link href={`/checkout/${params.showId}/summary?section=${encodeURIComponent(section || '')}${productsQuery ? `&${productsQuery}`: ''}`}>Skip</Link>
-        </Button>
-        <Button asChild>
-          <Link href={nextStepUrl}>
-            Continue <ArrowRight className="ml-2 h-5 w-5" />
+      <CardFooter className="flex justify-between items-center">
+        <Button variant="accent" asChild>
+          <Link href={prevStepUrl}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
           </Link>
         </Button>
+        <div className="flex space-x-4">
+          <Button variant="outline" asChild>
+            <Link href={`/checkout/${showId}/summary?section=${encodeURIComponent(section || '')}${productsQuery ? `&${productsQuery}` : ''}`}>Skip</Link>
+          </Button>
+          <Button asChild>
+            <Link href={nextStepUrl}>
+              Continue <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );

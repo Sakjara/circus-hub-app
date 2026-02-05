@@ -1,0 +1,34 @@
+.hoverContainer {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    /* Adjust based on alignment prop if needed, defaulting to center or inherit */
+    white-space: pre-wrap;
+    /* Preserve spaces */
+}
+
+.hoverChar {
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Ensure the span respects the parent's font properties */
+    font-family: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+    line-height: inherit;
+
+    /* Critical for the gradient text to apply to each letter if passed via className */
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+
+    /* Fix for some browsers clipping headers */
+    padding: 0.1em 0;
+    margin: -0.1em 0;
+}
+
+.hoverChar:hover {
+    transform: scale(1.35) translateY(-5px);
+    filter: brightness(1.2) drop-shadow(0 4px 6px rgba(234, 179, 8, 0.3));
+    /* Optional: Text stroke effect like the reference, but careful with gradient */
+    /* -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5); */
+}

@@ -12,6 +12,8 @@
     --popover-foreground: 20 14.3% 4.1%;
     --primary: 213 100% 41%;
     --primary-foreground: 60 9.1% 97.8%;
+    /* Verde agua para hover: Teal 500 aprox */
+    --primary-hover: 173 80% 40%;
     --secondary: 40 20% 80%;
     --secondary-foreground: 24 9.8% 10%;
     --muted: 40 20% 80%;

@@ -15,10 +15,15 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { SeatingChart, type SectionName } from '@/components/seating-chart';
 
-export default function ShowDetailPage({ params }: { params: { id: string } }) {
+import { use } from 'react';
+
+// ... other imports ...
+
+export default function ShowDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const [selectedSection, setSelectedSection] = useState<SectionName | null>(null);
-  
-  const show = shows.find((s) => s.id === params.id);
+
+  const show = shows.find((s) => s.id === id);
 
   if (!show) {
     notFound();

@@ -7,16 +7,20 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { vendors } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { ArrowRight, ShoppingCart } from 'lucide-react';
+import { ArrowRight, ShoppingCart, ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
-export default function ProductsPage({ params }: { params: { showId: string } }) {
+import { use } from 'react';
+
+export default function ProductsPage({ params }: { params: Promise<{ showId: string }> }) {
+  const { showId } = use(params);
   const searchParams = useSearchParams();
   const section = searchParams.get('section');
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  
+  const productParams = searchParams.getAll('product');
+  const [selectedProducts, setSelectedProducts] = useState<string[]>(productParams);
+
   const foodVendors = vendors.filter(v => v.type === 'food');
 
   const handleCheckboxChange = (vendorId: string, checked: boolean | string) => {
@@ -26,9 +30,9 @@ export default function ProductsPage({ params }: { params: { showId: string } })
       setSelectedProducts(prev => prev.filter(id => id !== vendorId));
     }
   };
-  
+
   const productsQuery = selectedProducts.map(p => `product=${p}`).join('&');
-  const nextStepUrl = `/checkout/${params.showId}/souvenirs?section=${encodeURIComponent(section || '')}${productsQuery ? `&${productsQuery}`: ''}`;
+  const nextStepUrl = `/checkout/${showId}/souvenirs?section=${encodeURIComponent(section || '')}${productsQuery ? `&${productsQuery}` : ''}`;
 
   return (
     <Card>
@@ -61,6 +65,7 @@ export default function ProductsPage({ params }: { params: { showId: string } })
                   <p className="font-bold text-primary">${vendor.price.toFixed(2)}</p>
                 </div>
                 <Checkbox
+                  checked={selectedProducts.includes(vendor.id)}
                   id={`vendor-${vendor.id}`}
                   onCheckedChange={(checked) => handleCheckboxChange(vendor.id, checked)}
                   className="h-6 w-6"
@@ -70,15 +75,23 @@ export default function ProductsPage({ params }: { params: { showId: string } })
           })}
         </div>
       </CardContent>
-      <CardFooter className="flex justify-end space-x-4">
-         <Button variant="outline" asChild>
-          <Link href={`/checkout/${params.showId}/souvenirs?section=${encodeURIComponent(section || '')}`}>Skip</Link>
-        </Button>
-        <Button asChild>
-          <Link href={nextStepUrl}>
-            Continue <ArrowRight className="ml-2 h-5 w-5" />
+      <CardFooter className="flex justify-between items-center">
+        <Button variant="accent" asChild>
+          <Link href={`/shows/${showId}`}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
           </Link>
         </Button>
+        <div className="flex space-x-4">
+          <Button variant="outline" asChild>
+            <Link href={`/checkout/${showId}/souvenirs?section=${encodeURIComponent(section || '')}`}>Skip</Link>
+          </Button>
+          <Button asChild>
+            <Link href={nextStepUrl}>
+              Continue <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );

@@ -4,8 +4,8 @@ export const shows: Show[] = [
   {
     id: '1',
     title: 'Fun Factory',
-    description: 'A whimsical world of fun, laughs, and pure entertainment.',
-    longDescription: 'Step into the Fun Factory, where laughter is manufactured and joy is the main product! This show is a delightful explosion of colors, comedy, and crazy contraptions. Perfect for kids and kids at heart, it\'s an unforgettable experience that will have the whole family smiling.',
+    description: 'Humans Gone Wild! A whimsical world of 60+ performers and 5 rings of fun.',
+    longDescription: 'Garden Bros Nuclear Circus delivers non-stop action with 60+ world-class performers, a 5-ring layout for unbeatable views, concert-style lights and sound, and a smooth, fast-moving show built for all ages. It\'s a modern, climate-controlled Big Top experience with real talent and zero filler.',
     imageId: 'show1',
     date: '2024-11-10T18:00:00Z',
     venue: 'The Fun Dome, Miami',
@@ -14,8 +14,8 @@ export const shows: Show[] = [
   {
     id: '2',
     title: 'Nuclear Circus',
-    description: 'A high-octane thrill ride with mind-blowing stunts.',
-    longDescription: 'Brace yourself for the Nuclear Circus, a post-apocalyptic fusion of daredevilry and dazzling spectacle. Witness breathtaking motorcycle stunts inside the Globe of Death, death-defying aerial acts, and explosive performances that will leave you speechless. This is circus entertainment at its most extreme.',
+    description: 'A high-octane thrill ride with mind-blowing stunts and 5-ring spectacle.',
+    longDescription: 'Garden Bros Nuclear Circus delivers non-stop action with 60+ world-class performers, a 5-ring layout for unbeatable views, concert-style lights and sound, and a smooth, fast-moving show built for all ages. It\'s a modern, climate-controlled Big Top experience with real talent and zero filler.',
     imageId: 'show2',
     date: '2024-11-25T20:00:00Z',
     venue: 'Thunderdome, Los Angeles',
