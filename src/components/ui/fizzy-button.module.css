@@ -28,11 +28,16 @@
     font-weight: 700;
     transition: all 0.3s ease;
 
-    /* Restaurar padding original hardcoded para asegurar consistencia */
-    padding: 1.5rem 2rem;
-    /* py-6 px-8 */
-    font-size: 1.125rem;
-    /* text-lg */
+    /* Responsive padding: smaller on mobile, larger on desktop */
+    padding: 0.8rem 1.0rem;
+    font-size: 1rem;
+}
+
+@media (min-width: 768px) {
+    .buttonBody {
+        padding: 1.5rem 2rem;
+        font-size: 1.125rem;
+    }
 }
 
 .container:hover .buttonBody {

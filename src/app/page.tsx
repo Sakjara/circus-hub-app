@@ -72,7 +72,7 @@ export default function Home() {
 
             {/* Artistic Circular Image */}
             <div className="flex justify-center md:justify-end">
-              <div className="relative w-80 h-80 md:w-72 md:h-72 lg:w-96 lg:h-96 xl:w-[40rem] xl:h-[40rem] -mt-6 md:mt-1 xl:-mt-8">
+              <div className="relative w-80 h-80 md:w-72 md:h-72 lg:w-96 lg:h-96 xl:w-[40rem] xl:h-[40rem] mt-4 md:mt-1 xl:-mt-8">
                 <Image
                   src={girlFlyImage}
                   alt="Artistic Circus Performer"
