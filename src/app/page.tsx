@@ -45,7 +45,7 @@ export default function Home() {
       </section>
 
       {/* Welcome Era Section */}
-      <section className="relative py-4 md:py-4 xl:py-16 bg-black text-white overflow-visible">
+      <section className="relative py-4 md:py-4 xl:pt-12 xl:pb-4 bg-black text-white overflow-visible">
         {/* Floating CTA Button */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-full max-w-fit px-4">
           <FizzyButton href="/shows" className="w-full sm:w-auto">
@@ -77,7 +77,7 @@ export default function Home() {
                   src={girlFlyImage}
                   alt="Artistic Circus Performer"
                   fill
-                  className="object-cover scale-110 hover:scale-100 transition-transform duration-700"
+                  className="object-cover scale-110 animate-float"
                 />
                 {/* Overlay Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/40 to-transparent mix-blend-overlay"></div>
