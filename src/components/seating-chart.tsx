@@ -60,6 +60,7 @@ const createSection = (
   rowSpacing: number,
   colSpacing: number,
   rotation: number = 0,
+  overrideType?: 'VIP' | 'Premium' | 'General'
 ): Seat[] => {
   const seats: Seat[] = [];
   const rad = (rotation * Math.PI) / 180;
@@ -67,23 +68,29 @@ const createSection = (
   for (let r = 0; r < rows; r++) {
     const rowCols = cols[r] || cols[0];
 
-    // Determine Category based on Row Index
+    // Determine Category
     let color = COLORS.General;
     let type = 'General';
     let price = PRICES.General;
     let yOffset = 0;
 
-    if (r < 3) {
-      color = COLORS.VIP;
-      type = 'VIP';
-      price = PRICES.VIP;
-    } else if (r < 7) {
-      color = COLORS.Premium;
-      type = 'Premium';
-      price = PRICES.Premium;
+    if (overrideType) {
+      type = overrideType;
+      color = COLORS[overrideType];
+      price = PRICES[overrideType];
     } else {
-      // GENERAL (Blue)
-      yOffset = AISLE_GAP;
+      if (r < 3) {
+        color = COLORS.VIP;
+        type = 'VIP';
+        price = PRICES.VIP;
+      } else if (r < 7) {
+        color = COLORS.Premium;
+        type = 'Premium';
+        price = PRICES.Premium;
+      } else {
+        // GENERAL (Blue)
+        yOffset = AISLE_GAP;
+      }
     }
 
     const rowWidth = (rowCols - 1) * colSpacing;
@@ -109,6 +116,7 @@ const createSection = (
   return seats;
 };
 
+
 // Curved Section Helper
 const createArcSection = (
   sectionName: string,
@@ -118,6 +126,7 @@ const createArcSection = (
   startAngle: number,
   endAngle: number,
   rows: number,
+  overrideType?: 'VIP' | 'Premium' | 'General'
 ): Seat[] => {
   const seats: Seat[] = [];
 
@@ -128,13 +137,19 @@ const createArcSection = (
     let type = 'General';
     let price = PRICES.General;
 
-    if (r < 3) {
-      color = COLORS.VIP; type = 'VIP'; price = PRICES.VIP;
-    } else if (r < 7) {
-      color = COLORS.Premium; type = 'Premium'; price = PRICES.Premium;
+    if (overrideType) {
+      type = overrideType;
+      color = COLORS[overrideType];
+      price = PRICES[overrideType];
     } else {
-      // General
-      radiusOffset = AISLE_GAP;
+      if (r < 3) {
+        color = COLORS.VIP; type = 'VIP'; price = PRICES.VIP;
+      } else if (r < 7) {
+        color = COLORS.Premium; type = 'Premium'; price = PRICES.Premium;
+      } else {
+        // General
+        radiusOffset = AISLE_GAP;
+      }
     }
 
     const currentRadius = startRadius + (r * SPACING_Y) + radiusOffset;
@@ -268,11 +283,16 @@ const createTaperedArcSection = (
 }
 
 
-export function SeatingChart({ onSectionSelect, selectedSection }: { onSectionSelect: (section: string | null) => void; selectedSection: string | null; }) {
+export function SeatingChart({ onSectionSelect, selectedSection, onCheckout }: {
+  onSectionSelect: (section: string | null) => void;
+  selectedSection: string | null;
+  onCheckout?: (seats: Seat[]) => void;
+}) {
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
 
   // --- Layout Definition ---
   // Taller Stage
@@ -301,6 +321,18 @@ export function SeatingChart({ onSectionSelect, selectedSection }: { onSectionSe
     ...createSection('Right Bot', 700, 430, 12, [28], SPACING_Y, SPACING_X, -90),
 
     // --- BOTTOM SIDE ---
+    // Gap Fillers (Split VIP/Premium per user diagram)
+    // Left Side: Outer=Premium(Red), Inner=VIP(Yellow)
+    // Aligning accurately: Left Vertical VIP X~292, Prem X~264.
+    // X=262 and X=292 align with the centers of the vertical strips above.
+    ...createSection('Gap Left Outer', 262, 550, 4, [4], SPACING_Y, SPACING_X, 0, 'Premium'),
+    ...createSection('Gap Left Inner', 292, 550, 4, [3], SPACING_Y, SPACING_X, 0, 'VIP'),
+
+    // Right Side: Inner=VIP(Yellow), Outer=Premium(Red)
+    // Aligning accurately: Right Vertical VIP X~708, Prem X~736.
+    ...createSection('Gap Right Inner', 708, 550, 4, [3], SPACING_Y, SPACING_X, 0, 'VIP'),
+    ...createSection('Gap Right Outer', 738, 550, 4, [4], SPACING_Y, SPACING_X, 0, 'Premium'),
+
     // Bottom Left Corner (Curved & Tapered)
     // Center logic applied: Outer R=270 meets Side Outer X=200 at Y=542 approx. Center=(460, 470).
     // Start 165 (Top), End 100 (Bottom).
@@ -317,24 +349,129 @@ export function SeatingChart({ onSectionSelect, selectedSection }: { onSectionSe
     ...createTaperedArcSection('Corner Right', 540, 470, 170, 15, 80, 12, true),
   ];
 
-  const handleZoomIn = () => setScale(s => Math.min(s * 1.2, 3));
+  // --- Zoom Logic ---
+  const getRelatedSections = (section: string | null): string[] => {
+    if (!section) return [];
+    const leftGroup = ['Corner Left', 'Gap Left Outer', 'Gap Left Inner'];
+    if (leftGroup.includes(section)) return leftGroup;
+
+    const rightGroup = ['Corner Right', 'Gap Right Inner', 'Gap Right Outer'];
+    if (rightGroup.includes(section)) return rightGroup;
+
+    return [section];
+  };
+
+  React.useEffect(() => {
+    if (selectedSection) {
+      // Find bounds of the section (including related gap fillers)
+      const related = getRelatedSections(selectedSection);
+      const sectionSeats = allSeats.filter(s => related.includes(s.section));
+
+      if (sectionSeats.length === 0) return;
+
+      const minX = Math.min(...sectionSeats.map(s => s.x));
+      const maxX = Math.max(...sectionSeats.map(s => s.x));
+      const minY = Math.min(...sectionSeats.map(s => s.y));
+      const maxY = Math.max(...sectionSeats.map(s => s.y));
+
+      const cx = (minX + maxX) / 2;
+      const cy = (minY + maxY) / 2;
+
+      // Target zoom level
+      const targetScale = 2.5;
+
+      // Calculate translation to center the target point (cx, cy)
+      // Viewport Center is (500, 425) relative to the 1000x850 viewBox
+      // Formula: Translate = Center - (Point * Scale)
+      const newX = 500 - (cx * targetScale);
+      const newY = 425 - (cy * targetScale);
+
+      setScale(targetScale);
+      setPosition({ x: newX, y: newY });
+
+    } else {
+      // Reset
+    }
+  }, [selectedSection]);
+
+
+  const handleZoomIn = () => setScale(s => Math.min(s * 1.2, 5));
   const handleZoomOut = () => setScale(s => Math.max(s / 1.2, 0.5));
-  const handleReset = () => { setScale(1); setPosition({ x: 0, y: 0 }); };
+  const handleReset = () => {
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
+    onSectionSelect(null);
+  };
+
+  const handleSeatClick = (e: React.MouseEvent, seat: Seat) => {
+    e.stopPropagation();
+
+    if (selectedSection !== seat.section) {
+      // Check if we are already in the "group" but clicking a different part?
+      // Actually, if we click a Gap seat while Corner is selected, we usually want to just select the seat, NOT re-zoom or reset.
+      // But currently seat.section != selectedSection.
+      // Enhancment: If seat.section is in getRelatedSections(selectedSection), treat as same section.
+
+      const related = getRelatedSections(selectedSection);
+      if (related.includes(seat.section)) {
+        // Same group, just toggle seat
+        setSelectedSeats(prev => {
+          if (prev.includes(seat.id)) {
+            return prev.filter(id => id !== seat.id);
+          } else {
+            return [...prev, seat.id];
+          }
+        });
+        return;
+      }
+
+      // Zoom into section
+      onSectionSelect(seat.section);
+    } else {
+      // Toggle selection
+      setSelectedSeats(prev => {
+        if (prev.includes(seat.id)) {
+          return prev.filter(id => id !== seat.id);
+        } else {
+          return [...prev, seat.id];
+        }
+      });
+    }
+  };
+
+  // Logic for Family Pack
+  const selectedCount = selectedSeats.length;
+  // Calculate total price
+  const rawTotal = selectedSeats.reduce((sum, id) => {
+    const s = allSeats.find(seat => seat.id === id);
+    return sum + (s ? s.price : 0);
+  }, 0);
+
+  const isFamilyPack = selectedCount >= 4;
+  const discount = isFamilyPack ? rawTotal * 0.20 : 0;
+  const finalPrice = rawTotal - discount;
 
   // Prop coords relative to center
   const PROP_Y = STAGE_Y - 40;
   const TEXT_Y = STAGE_Y + 40;
 
   return (
-    <div className="flex flex-col items-center w-full">
-      <div className="flex gap-2 mb-4">
-        <Button variant="outline" size="icon" onClick={handleZoomOut}><ZoomOut className="h-4 w-4" /></Button>
-        <Button variant="outline" size="icon" onClick={handleReset}><RotateCcw className="h-4 w-4" /></Button>
-        <Button variant="outline" size="icon" onClick={handleZoomIn}><ZoomIn className="h-4 w-4" /></Button>
+    <div className="flex flex-col items-center w-full relative">
+      {/* Top Controls */}
+      <div className="flex w-full justify-between items-center mb-4 px-4">
+        <div className="flex gap-2">
+          <Button variant="outline" size="icon" onClick={handleZoomOut}><ZoomOut className="h-4 w-4" /></Button>
+          <Button variant="outline" size="icon" onClick={handleReset}><RotateCcw className="h-4 w-4" /></Button>
+          <Button variant="outline" size="icon" onClick={handleZoomIn}><ZoomIn className="h-4 w-4" /></Button>
+        </div>
+
+        {selectedSection && (
+          <Button variant="default" onClick={handleReset}>Back to Overview</Button>
+        )}
       </div>
 
       <div
-        className="border rounded-lg bg-white overflow-hidden w-full h-[800px] relative shadow-inner cursor-grab active:cursor-grabbing"
+        className="border rounded-lg bg-white overflow-hidden w-full h-[600px] relative shadow-inner cursor-grab active:cursor-grabbing"
         onMouseDown={(e) => { setIsDragging(true); setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y }); }}
         onMouseMove={(e) => { if (isDragging) setPosition({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y }); }}
         onMouseUp={() => setIsDragging(false)}
@@ -344,65 +481,115 @@ export function SeatingChart({ onSectionSelect, selectedSection }: { onSectionSe
           width="100%"
           height="100%"
           viewBox="0 0 1000 850"
-          className="transition-transform duration-100 ease-out"
-          style={{ transform: `translate(${position.x}px, ${position.y}px) scale(${scale})` }}
         >
-          {/* Stage Background Area */}
-          <rect x={STAGE_X - STAGE_W / 2} y={STAGE_Y - STAGE_H / 2} width={STAGE_W} height={STAGE_H} fill={COLORS.Stage} ry="4" opacity={0.5} />
+          <g
+            transform={`translate(${position.x}, ${position.y}) scale(${scale})`}
+            className="transition-transform duration-500 ease-in-out"
+          >
+            {/* Stage Background Area */}
+            <rect x={STAGE_X - STAGE_W / 2} y={STAGE_Y - STAGE_H / 2} width={STAGE_W} height={STAGE_H} fill={COLORS.Stage} ry="4" opacity={0.5} />
 
-          {/* Visual Aisle Marker (Floor) */}
-          {/* We can't easily draw curved aisles, but the gap will be visible by absence of seats */}
+            {/* Prop/Details - Light Source Style */}
+            <defs>
+              <radialGradient id="stageLightGrad" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                <stop offset="0%" stopColor="#fef08a" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="#fef08a" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <ellipse cx={STAGE_X} cy={PROP_Y + 20} rx="60" ry="20" fill="url(#stageLightGrad)" opacity="0.6" />
 
-          {/* Prop/Details - Light Source Style */}
-          <defs>
-            <radialGradient id="stageLightGrad" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-              <stop offset="0%" stopColor="#fef08a" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#fef08a" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-          <ellipse cx={STAGE_X} cy={PROP_Y + 20} rx="60" ry="20" fill="url(#stageLightGrad)" opacity="0.6" />
+            {/* Trapezoid Shape */}
+            <path d={`M${STAGE_X - 25},${PROP_Y - 30} L${STAGE_X + 25},${PROP_Y - 30} L${STAGE_X + 40},${PROP_Y + 30} L${STAGE_X - 40},${PROP_Y + 30} Z`} fill="#475569" />
 
-          {/* Trapezoid Shape */}
-          <path d={`M${STAGE_X - 25},${PROP_Y - 30} L${STAGE_X + 25},${PROP_Y - 30} L${STAGE_X + 40},${PROP_Y + 30} L${STAGE_X - 40},${PROP_Y + 30} Z`} fill="#475569" />
+            {/* Stage Text */}
+            <text x={STAGE_X} y={TEXT_Y} textAnchor="middle" className="text-4xl font-extrabold fill-slate-500 uppercase tracking-[0.2em] opacity-80" style={{ textShadow: '0px 2px 4px rgba(0,0,0,0.1)' }}>Stage</text>
 
-          {/* Stage Text */}
-          <text x={STAGE_X} y={TEXT_Y} textAnchor="middle" className="text-4xl font-extrabold fill-slate-500 uppercase tracking-[0.2em] opacity-80" style={{ textShadow: '0px 2px 4px rgba(0,0,0,0.1)' }}>Stage</text>
+            {/* Render Seats */}
+            {allSeats.map((seat) => {
+              // Determine visual state
+              const isSelected = selectedSeats.includes(seat.id);
 
-          {/* Render Seats */}
-          {allSeats.map((seat) => {
-            const isSelected = selectedSection === seat.section;
-            const opacity = selectedSection ? (isSelected ? 1 : 0.2) : 1;
+              // Group Logic for Active/Dim
+              const activeGroup = selectedSection ? getRelatedSections(selectedSection) : [];
+              // If no section selected, everything is active (true).
+              // If section selected, seat is active if in the group.
+              const isSectionActive = !selectedSection || activeGroup.includes(seat.section);
 
-            return (
-              <circle
-                key={seat.id}
-                cx={seat.x}
-                cy={seat.y}
-                r={seat.r}
-                fill={seat.color}
-                opacity={opacity}
-                className={cn(
-                  "transition-all duration-200 cursor-pointer hover:r-[6px]",
-                  isSelected ? "stroke-black stroke-1" : ""
-                )}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSectionSelect(seat.section === selectedSection ? null : seat.section);
-                }}
-              >
-                <title>{seat.label} (${seat.price})</title>
-              </circle>
-            );
-          })}
+              // If we are zoomed in (selectedSection is not null), dim others
+              // If we are zoomed out, all are fully visible (opacity 1)
+              let opacity = 1;
+              if (selectedSection && !isSectionActive) {
+                opacity = 0.1; // Dim non-selected sections
+              }
 
-          {/* Towers / Exits */}
-          <rect x={150} y={750} width="40" height="20" fill="#bef264" rx="2" />
-          <text x={170} y={763} textAnchor="middle" className="text-[10px] font-bold fill-green-900 pointer-events-none">EXIT</text>
+              // Color override for selection
+              let fill = seat.color;
+              if (isSelected) fill = "#22c55e"; // Green for selected
+              // if occupied... (future)
 
-          <rect x={810} y={750} width="40" height="20" fill="#bef264" rx="2" />
-          <text x={830} y={763} textAnchor="middle" className="text-[10px] font-bold fill-green-900 pointer-events-none">EXIT</text>
+              return (
+                <circle
+                  key={seat.id}
+                  cx={seat.x}
+                  cy={seat.y}
+                  r={seat.r}
+                  fill={fill}
+                  opacity={opacity}
+                  className={cn(
+                    "transition-all duration-200 cursor-pointer hover:r-[6px]",
+                    isSelected ? "stroke-black stroke-2 r-[5px]" : ""
+                  )}
+                  onClick={(e) => handleSeatClick(e, seat)}
+                >
+                  <title>{seat.label} (${seat.price})</title>
+                </circle>
+              );
+            })}
 
+            {/* Towers / Exits */}
+            <rect x={150} y={750} width="40" height="20" fill="#bef264" rx="2" />
+            <text x={170} y={763} textAnchor="middle" className="text-[10px] font-bold fill-green-900 pointer-events-none">EXIT</text>
+
+            <rect x={810} y={750} width="40" height="20" fill="#bef264" rx="2" />
+            <text x={830} y={763} textAnchor="middle" className="text-[10px] font-bold fill-green-900 pointer-events-none">EXIT</text>
+          </g>
         </svg>
+
+        {/* Floating Info Panel */}
+        {selectedCount > 0 && (
+          <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur p-4 rounded-xl shadow-xl border border-slate-200 w-64">
+            <h3 className="font-bold text-lg mb-2">Your Selection</h3>
+            <div className="flex justify-between text-sm mb-1">
+              <span>Seats:</span>
+              <span className="font-medium">{selectedCount}</span>
+            </div>
+            <div className="flex justify-between text-sm mb-1">
+              <span>Subtotal:</span>
+              <span>${rawTotal}</span>
+            </div>
+            {isFamilyPack && (
+              <div className="flex justify-between text-sm text-green-600 font-bold mb-1">
+                <span>Family Pack (20%):</span>
+                <span>-${discount.toFixed(0)}</span>
+              </div>
+            )}
+            <div className="border-t my-2 pt-2 flex justify-between font-bold text-lg">
+              <span>Total:</span>
+              <span>${finalPrice.toFixed(0)}</span>
+            </div>
+            <Button
+              className="w-full mt-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+              onClick={() => {
+                if (onCheckout) {
+                  const seats = allSeats.filter(s => selectedSeats.includes(s.id));
+                  onCheckout(seats);
+                }
+              }}
+            >
+              Checkout Now
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Legend */}
@@ -410,6 +597,7 @@ export function SeatingChart({ onSectionSelect, selectedSection }: { onSectionSe
         <div className="flex items-center gap-2"><div className="w-4 h-4 rounded-full" style={{ background: COLORS.VIP }}></div> VIP ($150)</div>
         <div className="flex items-center gap-2"><div className="w-4 h-4 rounded-full" style={{ background: COLORS.Premium }}></div> Premium ($95)</div>
         <div className="flex items-center gap-2"><div className="w-4 h-4 rounded-full" style={{ background: COLORS.General }}></div> General ($60)</div>
+        <div className="flex items-center gap-2"><div className="w-4 h-4 rounded-full bg-green-500"></div> Selected</div>
       </div>
     </div>
   );

@@ -29,7 +29,7 @@
     transition: all 0.3s ease;
 
     /* Responsive padding: smaller on mobile, larger on desktop */
-    padding: 0.8rem 1.0rem;
+    padding: .8rem .8rem;
     font-size: 1rem;
 }
 

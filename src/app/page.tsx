@@ -28,24 +28,62 @@ import { FadeIn } from "@/components/ui/fade-in"
 import { FizzyButton } from "@/components/ui/fizzy-button"
 import { InteractiveHoverText } from "@/components/ui/interactive-hover-text"
 
+import { useState, useEffect } from 'react';
+
+// ... existing imports
+
 export default function Home() {
+  const [showVideo, setShowVideo] = useState(false);
   const aboutImage = PlaceHolderImages.find((img) => img.id === 'about');
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowVideo(true);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative h-[55vh] md:h-[50vh] xl:h-[75vh] w-full -mt-[20%] md:-mt-[6%]">
-        <Image
-          src={bannerImage}
-          alt="Garden Bros Circus Fun Factory"
-          fill
-          className="object-cover"
-          priority
-        />
+      <section className="relative h-[85vh] md:h-[80vh] xl:h-[85vh] w-full -mt-[20%] md:-mt-[6%]">
+        <div className={`absolute inset-0 transition-opacity duration-1000 ${showVideo ? 'opacity-0' : 'opacity-100'}`}>
+          <Image
+            src={bannerImage}
+            alt="Garden Bros Circus Fun Factory"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+        <div className={`absolute inset-0 transition-opacity duration-1000 ${showVideo ? 'opacity-100' : 'opacity-0'}`}>
+          {showVideo && (
+            <>
+              {/* Mobile Video (9:16) */}
+              <video
+                src="https://impulso-digital.cl/wp-content/uploads/2026/02/Circus_short_v3.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="md:hidden object-cover w-full h-full"
+              />
+              {/* Desktop Video (16:9) */}
+              <video
+                src="https://impulso-digital.cl/wp-content/uploads/2026/02/Garden_Bros_Nuclear_Circus_v3.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="hidden md:block object-cover w-full h-full"
+              />
+            </>
+          )}
+        </div>
       </section>
 
       {/* Welcome Era Section */}
-      <section className="relative py-4 md:py-4 xl:pt-12 xl:pb-4 bg-black text-white overflow-visible">
+      <section className="relative py-4 md:py-4 xl:pt-12 xl:pb-4 bg-black text-white overflow-visible -mt-1">
         {/* Floating CTA Button */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-full max-w-fit px-4">
           <FizzyButton href="/shows" className="w-full sm:w-auto">

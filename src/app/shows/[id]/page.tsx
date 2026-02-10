@@ -14,14 +14,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { SeatingChart, type SectionName } from '@/components/seating-chart';
-
 import { use } from 'react';
+import { BookingSummary, type SelectedSeat } from '@/components/booking/BookingSummary';
 
-// ... other imports ...
+// ...
 
 export default function ShowDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [selectedSection, setSelectedSection] = useState<SectionName | null>(null);
+  const [checkoutSeats, setCheckoutSeats] = useState<SelectedSeat[]>([]);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const show = shows.find((s) => s.id === id);
 
@@ -31,6 +33,37 @@ export default function ShowDetailPage({ params }: { params: Promise<{ id: strin
 
   const showImage = PlaceHolderImages.find((img) => img.id === show.imageId);
   const showDate = new Date(show.date);
+
+  const handleCheckout = (seats: any[]) => {
+    const mapped: SelectedSeat[] = seats.map(s => ({
+      id: s.id,
+      label: s.label,
+      price: s.price,
+      section: s.section
+    }));
+    setCheckoutSeats(mapped);
+    setIsCheckingOut(true);
+  };
+
+  const handleBookingComplete = (orderData: any) => {
+    console.log('Order Completed:', orderData);
+    // Here we would redirect to a success page or show a modal
+    alert('Order Placed Successfully! (See console for payload)');
+    setIsCheckingOut(false);
+    setSelectedSection(null);
+  };
+
+  if (isCheckingOut) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <BookingSummary
+          selectedSeats={checkoutSeats}
+          onBack={() => setIsCheckingOut(false)}
+          onComplete={handleBookingComplete}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -75,13 +108,11 @@ export default function ShowDetailPage({ params }: { params: Promise<{ id: strin
               </div>
               <Separator className="my-6" />
               <h3 className="font-headline text-xl mb-4">Select Your Section</h3>
-              <SeatingChart onSectionSelect={setSelectedSection} selectedSection={selectedSection} />
-              <Button asChild size="lg" className="w-full mt-6" disabled={!selectedSection}>
-                <Link href={selectedSection ? `/checkout/${show.id}/products?section=${encodeURIComponent(selectedSection)}` : '#'}>
-                  <Ticket className="mr-2 h-5 w-5" />
-                  Buy Tickets
-                </Link>
-              </Button>
+              <SeatingChart
+                onSectionSelect={(s) => setSelectedSection(s as SectionName | null)}
+                selectedSection={selectedSection}
+                onCheckout={handleCheckout}
+              />
             </CardContent>
           </Card>
         </div>
