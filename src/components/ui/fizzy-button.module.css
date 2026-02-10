@@ -29,8 +29,9 @@
     transition: all 0.3s ease;
 
     /* Responsive padding: smaller on mobile, larger on desktop */
-    padding: 1rem 1.5rem;
+    padding: .8rem 2rem;
     font-size: 1rem;
+    white-space: nowrap;
 }
 
 @media (min-width: 768px) {
