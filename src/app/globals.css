@@ -8,15 +8,15 @@
     --foreground: 20 14.3% 4.1%;
     --card: #3689cc;
     --card-foreground: 20 14.3% 4.1%;
-    --popover: 40 62% 88%;
-    --popover-foreground: 20 14.3% 4.1%;
+    --popover: 213 100% 95%;
+    --popover-foreground: 213 100% 10%;
     --primary: 213 100% 41%;
     --primary-foreground: 60 9.1% 97.8%;
     /* Verde agua para hover: Teal 500 aprox */
     --primary-hover: 173 80% 40%;
-    --secondary: 40 20% 80%;
+    --secondary: 213 30% 90%;
     --secondary-foreground: 24 9.8% 10%;
-    --muted: 40 20% 80%;
+    --muted: 213 50% 20%;
     --muted-foreground: 25 5.3% 44.7%;
     --accent: 45 56% 56%;
     --accent-foreground: 24 9.8% 10%;
@@ -55,7 +55,12 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  .bg-nuclear-gradient {
+    background: linear-gradient(39deg, rgba(0, 67, 176, 1) 23%, rgba(27, 183, 222, 1) 100%);
   }
 }

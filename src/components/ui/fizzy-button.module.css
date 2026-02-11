@@ -8,6 +8,8 @@
     /* Create new stacking context */
     border-radius: 9999px;
     /* rounded-full */
+    overflow: visible;
+    /* Allow particles to escape */
 }
 
 /* El cuerpo visible del botón */
@@ -55,9 +57,10 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: -1;
-    /* Detrás del buttonBody */
+    z-index: 1;
+    /* Behind buttonBody (z-index: 10) but visible */
     border-radius: 9999px;
+    overflow: visible;
 }
 
 .particle {
@@ -72,26 +75,32 @@
     height: var(--size);
     transform: translate(-50%, -50%);
     /* Start exactly center */
+    box-shadow: 0 0 15px var(--bg-color), 0 0 25px var(--bg-color), 0 0 35px var(--bg-color);
+    /* Strong glow effect */
 }
 
 .container:hover .particle {
-    animation: explode-out 0.8s ease-out infinite;
+    animation: explode-out 1.2s ease-out infinite;
     animation-delay: var(--delay);
 }
 
 @keyframes explode-out {
     0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3);
+    }
+
+    20% {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(0.5);
     }
 
     60% {
-        opacity: 0.8;
+        opacity: 1;
     }
 
     100% {
         opacity: 0;
         /* Move out to tx, ty relative to center */
-        transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1);
+        transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.5);
     }
 }

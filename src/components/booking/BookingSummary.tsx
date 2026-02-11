@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { FizzyActionButton } from '@/components/ui/fizzy-action-button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
@@ -33,9 +34,10 @@ interface BookingSummaryProps {
     selectedSeats: SelectedSeat[];
     onBack: () => void;
     onComplete: (orderData: any) => void;
+    showId?: string;
 }
 
-export function BookingSummary({ selectedSeats, onBack, onComplete }: BookingSummaryProps) {
+export function BookingSummary({ selectedSeats, onBack, onComplete, showId }: BookingSummaryProps) {
     const [configs, setConfigs] = useState<Record<string, WristbandConfig>>(() => {
         const initial: Record<string, WristbandConfig> = {};
         selectedSeats.forEach(seat => {
@@ -58,7 +60,6 @@ export function BookingSummary({ selectedSeats, onBack, onComplete }: BookingSum
 
     const calculateTotal = () => {
         let total = selectedSeats.reduce((sum, seat) => sum + seat.price, 0);
-        // Add logic for Wristband fees if any? Assuming free included for now.
         // Apply Family Discount (20% for 4+)
         if (selectedSeats.length >= 4) {
             total = total * 0.8;
@@ -89,25 +90,43 @@ export function BookingSummary({ selectedSeats, onBack, onComplete }: BookingSum
             total: calculateTotal(),
             paymentToken: mockToken,
             customerName: cardName,
-            customerEmail: email
+            customerEmail: email,
+            showId // Pass showId to payload
         };
 
-        const result = await SeatService.createOrder(orderPayload);
+        // Race between order creation and a 15s timeout
+        const timeoutPromise = new Promise<{ success: boolean; error?: any; orderId?: string }>((_, reject) =>
+            setTimeout(() => reject(new Error('Request timed out. Please check your internet connection.')), 15000)
+        );
 
-        setIsProcessing(false);
+        try {
+            console.log('Starting order creation...');
+            const result = await Promise.race([
+                SeatService.createOrder(orderPayload),
+                timeoutPromise
+            ]);
 
-        if (result.success && result.orderId) {
-            try {
-                const qr = await QRCodeService.generateQRCode(result.orderId);
-                setSuccessData({ qr, orderId: result.orderId });
-            } catch (e) {
-                console.error(e);
-                alert('Order saved, but failed to generate QR');
-                onComplete({ ...orderPayload, orderId: result.orderId });
+            console.log('Order creation result:', result);
+            setIsProcessing(false);
+
+            if (result.success && result.orderId) {
+                // ... success handling
+                try {
+                    const qr = await QRCodeService.generateQRCode(result.orderId);
+                    setSuccessData({ qr, orderId: result.orderId });
+                } catch (e) {
+                    console.error(e);
+                    alert('Order saved, but failed to generate QR');
+                    onComplete({ ...orderPayload, orderId: result.orderId });
+                }
+            } else {
+                console.error('Order creation failed:', result.error);
+                alert(`Failed to create order: ${result.error?.message || 'Unknown error'}`);
             }
-        } else {
-            console.error('Order creation failed:', result.error);
-            alert('Failed to create order. Please try again.');
+        } catch (error: any) {
+            console.error('Payment processing error:', error);
+            setIsProcessing(false);
+            alert(error.message || 'An unexpected error occurred during payment.');
         }
     };
 
@@ -141,13 +160,18 @@ export function BookingSummary({ selectedSeats, onBack, onComplete }: BookingSum
         );
     }
 
-    const total = calculateTotal();
     const subtotal = selectedSeats.reduce((sum, seat) => sum + seat.price, 0);
-    const discount = subtotal - total;
+    const total = subtotal; // Tickets are priced correctly from previous screen
 
     return (
         <div className="max-w-4xl mx-auto p-4">
-            <Button variant="ghost" onClick={onBack} className="mb-4">← Back to Seat Selection</Button>
+            <Button
+                variant="ghost"
+                onClick={onBack}
+                className="mb-4 text-slate-600 hover:bg-gradient-to-r hover:from-blue-700 hover:to-cyan-500 hover:text-white transition-all shadow-none hover:shadow-md"
+            >
+                ← Back to Seat Selection
+            </Button>
 
             <div className="grid md:grid-cols-3 gap-8">
                 {/* Left Column: Wristband Configuration */}
@@ -162,7 +186,7 @@ export function BookingSummary({ selectedSeats, onBack, onComplete }: BookingSum
                                 <div key={seat.id} className="flex flex-col sm:flex-row gap-4 p-4 border rounded-lg items-start sm:items-center bg-slate-50">
                                     <div className="flex-1">
                                         <div className="font-bold">{seat.label}</div>
-                                        <div className="text-sm text-muted-foreground">{seat.section} • ${seat.price}</div>
+                                        <div className="text-sm text-muted-foreground">{seat.section} • ${seat.price.toFixed(2)}</div>
                                     </div>
 
                                     <div className="flex gap-2 w-full sm:w-auto">
@@ -180,7 +204,7 @@ export function BookingSummary({ selectedSeats, onBack, onComplete }: BookingSum
                                             </SelectContent>
                                         </Select>
 
-                                        {/* Spend Limit (Only for Kids usually, but structure allows flexibility) */}
+                                        {/* Spend Limit */}
                                         <Select
                                             value={configs[seat.id]?.spendLimit}
                                             onValueChange={(v) => updateConfig(seat.id, { spendLimit: v as SpendLimit })}
@@ -257,27 +281,31 @@ export function BookingSummary({ selectedSeats, onBack, onComplete }: BookingSum
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <div className="flex justify-between text-sm mb-2">
+                                <div className="flex justify-between text-sm mb-4">
                                     <span className="text-muted-foreground">Tickets ({selectedSeats.length})</span>
                                     <span>${subtotal.toFixed(2)}</span>
                                 </div>
-                                {discount > 0 && (
-                                    <div className="flex justify-between text-sm mb-2 text-green-600 font-medium">
-                                        <span>Family Pack (20%)</span>
-                                        <span>-${discount.toFixed(2)}</span>
-                                    </div>
-                                )}
-                                <Separator className="my-2" />
-                                <div className="flex justify-between text-lg font-bold">
-                                    <span>Total</span>
-                                    <span>${total.toFixed(2)}</span>
+                                <Separator className="my-4" />
+                                <div className="flex justify-between items-center mb-6">
+                                    <span className="font-bold text-lg">Total</span>
+                                    <span className="font-bold text-2xl text-primary">${total.toFixed(2)}</span>
                                 </div>
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 h-12 text-lg" onClick={handlePay} disabled={isProcessing || !cardName || !email}>
-                                {isProcessing ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...</> : `Pay $${total.toFixed(2)}`}
-                            </Button>
+                            <FizzyActionButton
+                                onClick={handlePay}
+                                disabled={isProcessing || !cardName || !email}
+                                isLoading={isProcessing}
+                                className="w-full h-14 text-white font-bold shadow-xl transition-all rounded-lg overflow-hidden group relative !border-0"
+                                style={{
+                                    background: 'linear-gradient(144deg, rgba(0, 67, 176, 1) 23%, rgba(27, 222, 150, 1) 100%)',
+                                    border: 'none',
+                                    color: 'white'
+                                }}
+                            >
+                                {isProcessing ? "Processing..." : `Pay $${total.toFixed(2)}`}
+                            </FizzyActionButton>
                         </CardFooter>
                     </Card>
                 </div>

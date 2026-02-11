@@ -28,7 +28,12 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="dark z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header
+      className="dark z-50 w-full border-b backdrop-blur"
+      style={{
+        backgroundColor: 'hsl(213.62deg 74.71% 17.71% / 60%)'
+      }}
+    >
       <div className="container flex h-20 md:h-24 items-center">
 
         {/* Left side */}
@@ -61,7 +66,7 @@ export default function Header() {
           <div className="md:hidden">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="text-white">
                   <Menu className="h-6 w-6" />
                   <span className="sr-only">Toggle Menu</span>
                 </Button>

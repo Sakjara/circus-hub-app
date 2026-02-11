@@ -47,7 +47,7 @@ export default function ShowCard({ show }: ShowCardProps) {
         </div>
       </CardContent>
       <CardFooter className="p-6 pt-0">
-        <Button asChild className="w-full">
+        <Button asChild variant="accent" className="w-full">
           <Link href={`/shows/${show.id}`}>
             View Details <ArrowRight className="ml-2 h-4 w-4" />
           </Link>

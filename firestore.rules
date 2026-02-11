@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Orders Collection
+    // - Create: Public (allow anyone to place an order)
+    // - Read: Public IF they know the specific Order ID (e.g. for confirmation page)
+    // - List: Denied (nobody can dump the entire DB)
+    // - Update/Delete: Denied (immutable once created, unless by Admin SDK)
+    match /orders/{orderId} {
+      allow create: if true;
+      allow get: if true;
+      allow list: if false;
+      allow update, delete: if false;
+    }
+
+    // Wristbands Collection (Future Use)
+    // - Likely needs to be readable by Kiosk/Staff apps
+    match /wristbands/{wristbandId} {
+      allow read, write: if false; // Strict by default for now
+    }
+  }
+}

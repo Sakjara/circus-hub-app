@@ -7,6 +7,22 @@ export interface Show {
   date: string;
   venue: string;
   price: number;
+  tourStops?: TourStop[];
+}
+
+export interface Performance {
+  id: string;
+  date: string; // ISO string
+  timeLabel: string; // Display time e.g. "4:30 PM"
+}
+
+export interface TourStop {
+  id: string;
+  city: string;
+  venue: string;
+  address: string;
+  dateRange: string;
+  performances: Performance[];
 }
 
 export interface Vendor {

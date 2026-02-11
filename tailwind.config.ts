@@ -13,9 +13,15 @@ export default {
       padding: "2rem",
       screens: {
         "2xl": "1400px",
+        "3xl": "1650px",
+        "4xl": "1800px",
       },
     },
     extend: {
+      screens: {
+        "3xl": "1600px",
+        "4xl": "1921px",
+      },
       fontFamily: {
         body: ['PT Sans', 'sans-serif'],
         headline: ['Playfair Display', 'serif'],
