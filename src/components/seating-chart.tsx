@@ -650,6 +650,40 @@ export function SeatingChart({ showId, onSectionSelect, selectedSection, onCheck
             <span className="font-bold text-lg">{selectedCount}</span>
           </div>
 
+          {/* Incentive Message - Show when 3 seats selected */}
+          {selectedCount === 3 && (
+            <div className="mb-4 p-3 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-lg animate-in fade-in zoom-in-95 duration-300">
+              <div className="flex items-start gap-2">
+                <span className="text-2xl">🎉</span>
+                <div className="flex-1">
+                  <p className="font-bold text-amber-900 text-sm mb-1">
+                    Almost there!
+                  </p>
+                  <p className="text-amber-800 text-xs leading-tight">
+                    Select <strong>1 more seat</strong> and unlock group discounts
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Success Message - Show when 4+ seats selected */}
+          {selectedCount >= 4 && (
+            <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg animate-in fade-in zoom-in-95 duration-300">
+              <div className="flex items-start gap-2">
+                <span className="text-2xl">✨</span>
+                <div className="flex-1">
+                  <p className="font-bold text-green-900 text-sm mb-1">
+                    Great! Family discount unlocked!
+                  </p>
+                  <p className="text-green-800 text-xs leading-tight">
+                    You've qualified for special group pricing
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <Button
             className="w-full bg-gradient-to-r from-blue-700 to-cyan-500 hover:from-blue-800 hover:to-cyan-600 text-white shadow-lg py-6 text-lg tracking-wide rounded-lg font-bold"
             onClick={() => {

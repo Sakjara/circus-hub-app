@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Minus, Plus, Ticket } from 'lucide-react';
+import { Minus, Plus, Ticket, Sparkles, Gift } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -56,6 +56,21 @@ export function TicketSelection({ selectedSeats, onConfirm, onBack }: TicketSele
         Promo: shouldDefaultToPromo ? 4 : 0
     });
 
+    // State for showing "almost there" toast
+    const [showAlmostThereToast, setShowAlmostThereToast] = useState(false);
+
+    // Show toast when exactly 3 seats are selected (and promo is available)
+    useEffect(() => {
+        if (totalSeats === 3 && prices.Promo !== null) {
+            setShowAlmostThereToast(true);
+            // Auto-hide after 5 seconds
+            const timer = setTimeout(() => setShowAlmostThereToast(false), 5000);
+            return () => clearTimeout(timer);
+        } else {
+            setShowAlmostThereToast(false);
+        }
+    }, [totalSeats, prices.Promo]);
+
     const currentCount = counts.Adult + counts.Child + counts.Promo;
     const remaining = totalSeats - currentCount;
     const isValid = currentCount === totalSeats;
@@ -95,7 +110,39 @@ export function TicketSelection({ selectedSeats, onConfirm, onBack }: TicketSele
     };
 
     return (
-        <div className="max-w-2xl mx-auto p-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="max-w-4xl mx-auto p-4 space-y-4">
+            {/* "Almost There" Toast - Shows when 3 seats selected */}
+            {showAlmostThereToast && (
+                <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top-5 duration-500">
+                    <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white p-4 rounded-lg shadow-2xl max-w-sm border-2 border-amber-400">
+                        <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0">
+                                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                                    <Sparkles className="w-6 h-6 text-amber-500" />
+                                </div>
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="font-bold text-lg mb-1">🎉 ¡Casi lo logras!</h3>
+                                <p className="text-sm text-amber-50">
+                                    Selecciona <strong>1 asiento más</strong> y desbloquea descuentos grupales especiales
+                                </p>
+                                <p className="text-xs text-amber-100 mt-2">
+                                    💰 Ahorra hasta ${((prices.Adult - (prices.Promo || 0)) * 4).toFixed(2)} en 4 tickets
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setShowAlmostThereToast(false)}
+                                className="flex-shrink-0 text-white hover:text-amber-100 transition-colors"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <Button
                 variant="ghost"
                 onClick={onBack}
@@ -104,14 +151,16 @@ export function TicketSelection({ selectedSeats, onConfirm, onBack }: TicketSele
                 ← Back to Map
             </Button>
 
-            <Card className="shadow-xl border-slate-200">
-                <CardHeader className="bg-slate-50 border-b">
-                    <CardTitle className="flex justify-between items-center">
-                        <span>Select Ticket Types</span>
+            <Card className="border-2 shadow-lg">
+                <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 border-b">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <CardTitle className="text-2xl">Select Ticket Types</CardTitle>
+                        </div>
                         <Badge variant="secondary" className="text-lg px-3 py-1">
                             {sectionType} Section
                         </Badge>
-                    </CardTitle>
+                    </div>
                     <CardDescription>
                         You have selected <strong>{totalSeats}</strong> seats. Please assign a ticket type to each.
                     </CardDescription>
@@ -152,8 +201,33 @@ export function TicketSelection({ selectedSeats, onConfirm, onBack }: TicketSele
                         </div>
                     </div>
 
-                    {/* Promo Option */}
-                    {prices.Promo !== null && (
+                    {/* Incentive Banner - Show when less than 4 seats */}
+                    {totalSeats < 4 && (
+                        <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
+                            <div className="flex items-start gap-3">
+                                <Gift className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                                <div>
+                                    <p className="font-semibold text-blue-900 text-sm">💡 Unlock Group Discounts!</p>
+                                    <p className="text-blue-700 text-xs mt-1">
+                                        Select <strong>4 or more seats</strong> to access special promotional pricing
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Success Message - Show when 4+ seats selected */}
+                    {totalSeats >= 4 && prices.Promo !== null && (
+                        <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg animate-in fade-in duration-300">
+                            <div className="flex items-center gap-2">
+                                <Sparkles className="w-4 h-4 text-green-600" />
+                                <p className="font-semibold text-green-900 text-sm">🎉 Group Discount Unlocked!</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Promo Option - Only show if 4+ seats */}
+                    {totalSeats >= 4 && prices.Promo !== null && (
                         <div className="flex items-center justify-between p-4 border rounded-lg hover:border-rose-300 transition-colors bg-white border-dashed border-rose-200">
                             <div>
                                 <div className="font-bold text-lg text-rose-600 flex items-center gap-2">

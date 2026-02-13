@@ -42,3 +42,76 @@ export interface Ticket {
   seat: string;
   qrCodeValue: string;
 }
+
+// Order Management Types
+export type OrderStatus = 'PENDING' | 'PAID' | 'FULFILLED' | 'CANCELLED';
+
+export interface OrderSeat {
+  sectionId: string;
+  sectionName: string;
+  row: string;
+  seatNumber: number;
+  ticketType: 'adult' | 'child' | 'promo';
+  price: number;
+}
+
+export interface OrderVenue {
+  name: string;
+  address: string;
+}
+
+export interface OrderPaymentMethod {
+  type: string;
+  last4: string;
+}
+
+export interface Order {
+  orderId: string;
+  status: OrderStatus;
+  createdAt: Date;
+  updatedAt: Date;
+
+  // Customer Info
+  customerEmail: string;
+  customerName: string;
+
+  // Event Info
+  showId: string;
+  showName: string;
+  performanceId?: string;
+  performanceDate: Date;
+  venue: OrderVenue;
+
+  // Seats
+  seats: OrderSeat[];
+
+  // Payment
+  subtotal: number;
+  fees: number;
+  total: number;
+  paymentMethod: OrderPaymentMethod;
+  stripeCustomerId?: string;
+  paymentMethodId?: string;
+
+  // QR Code
+  qrCodeData: string;
+  qrCodeUrl?: string;
+}
+
+export interface CreateOrderPayload {
+  items: Array<{
+    seatId: string;
+    section: string;
+    price: number;
+    label: string;
+    wristband?: {
+      type: string;
+      spendLimit: string;
+    };
+  }>;
+  total: number;
+  paymentToken: string;
+  customerName: string;
+  customerEmail: string;
+  showId?: string;
+}

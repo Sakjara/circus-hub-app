@@ -9,9 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, CreditCard, Lock, CheckCircle2, Download } from 'lucide-react';
+import { Loader2, CreditCard, Lock, CheckCircle2, Download, Mail } from 'lucide-react';
 import { SeatService } from '@/services/seat-service';
 import { QRCodeService } from '@/services/qrcode-service';
+import { generateTicketPDF, type TicketData } from '@/lib/ticket-generator';
 
 // Types
 export interface SelectedSeat {
@@ -49,7 +50,12 @@ export function BookingSummary({ selectedSeats, onBack, onComplete, showId }: Bo
     const [isProcessing, setIsProcessing] = useState(false);
     const [cardName, setCardName] = useState('');
     const [email, setEmail] = useState('');
-    const [successData, setSuccessData] = useState<{ qr: string, orderId: string } | null>(null);
+    const [successData, setSuccessData] = useState<{
+        qr: string;
+        orderId: string;
+        orderData: any;
+        qrCodeData: string;
+    } | null>(null);
 
     const updateConfig = (seatId: string, updates: Partial<WristbandConfig>) => {
         setConfigs(prev => ({
@@ -113,7 +119,12 @@ export function BookingSummary({ selectedSeats, onBack, onComplete, showId }: Bo
                 // ... success handling
                 try {
                     const qr = await QRCodeService.generateQRCode(result.orderId);
-                    setSuccessData({ qr, orderId: result.orderId });
+                    setSuccessData({
+                        qr,
+                        orderId: result.orderId,
+                        orderData: orderPayload,
+                        qrCodeData: result.orderId
+                    });
                 } catch (e) {
                     console.error(e);
                     alert('Order saved, but failed to generate QR');
@@ -127,6 +138,58 @@ export function BookingSummary({ selectedSeats, onBack, onComplete, showId }: Bo
             console.error('Payment processing error:', error);
             setIsProcessing(false);
             alert(error.message || 'An unexpected error occurred during payment.');
+        }
+    };
+
+    const handleDownloadTicket = async () => {
+        if (!successData) return;
+
+        try {
+            // Parse seat information from orderData
+            const seats = successData.orderData.items.map((item: any) => {
+                // Extract section, row, and seat number from label (e.g., "101-A-5")
+                const parts = item.label.split('-');
+                return {
+                    section: item.section || parts[0] || 'General',
+                    row: parts[1] || 'A',
+                    seatNumber: parseInt(parts[2]) || 1,
+                    ticketType: item.wristband?.type?.toLowerCase() || 'adult',
+                    price: item.price
+                };
+            });
+
+            // Calculate fees (assuming 5% service fee)
+            const subtotal = successData.orderData.total;
+            const fees = subtotal * 0.05;
+            const total = subtotal + fees;
+
+            // Create ticket data
+            const ticketData: TicketData = {
+                orderId: successData.orderId,
+                orderDate: new Date(),
+                customerEmail: successData.orderData.customerEmail || email,
+                customerName: successData.orderData.customerName || cardName,
+                showName: 'Garden Bros Nuclear Circus',
+                venueName: 'North Point Mall',
+                venueAddress: '1000 North Point Circle, Alpharetta, GA',
+                eventDate: new Date('2025-02-12'),
+                eventTime: '7:30 PM',
+                seats,
+                subtotal,
+                fees,
+                total,
+                paymentMethod: {
+                    type: 'Visa',
+                    last4: '1234'
+                },
+                qrCodeData: successData.qrCodeData
+            };
+
+            // Generate PDF
+            await generateTicketPDF(ticketData);
+        } catch (error) {
+            console.error('Error generating ticket PDF:', error);
+            alert('Failed to generate ticket PDF. Please try again.');
         }
     };
 
@@ -148,10 +211,15 @@ export function BookingSummary({ selectedSeats, onBack, onComplete, showId }: Bo
                     <p className="text-2xl font-mono font-bold tracking-wider">{successData.orderId}</p>
                 </div>
 
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
+                    <Mail className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                        <p className="font-semibold text-blue-900">Tickets sent by email</p>
+                        <p className="text-sm text-blue-700">We've sent your tickets to your email. Check your inbox for your QR code.</p>
+                    </div>
+                </div>
+
                 <div className="flex flex-col gap-3">
-                    <Button className="w-full gap-2" variant="outline" onClick={() => window.print()}>
-                        <Download className="w-4 h-4" /> Download Ticket
-                    </Button>
                     <Button className="w-full" size="lg" onClick={() => onComplete({ orderId: successData.orderId })}>
                         Finish & Return to Home
                     </Button>
